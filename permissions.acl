@@ -1,0 +1,175 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
+/**
+ * Admin access control rule
+ */
+ rule AdminUseProjectRule {
+    description: "Admin can create and update Project assets."
+    participant: "roll_royce.challenge.com.Admin"
+    operation: CREATE, UPDATE
+    resource: "roll_royce.challenge.com.Project"
+    action: ALLOW
+}
+
+ rule AdminUseDepartmentRule {
+    description: "Admin can create, update and read Department assets."
+    participant: "roll_royce.challenge.com.Admin"
+    operation: CREATE, UPDATE, READ
+    resource: "roll_royce.challenge.com.Department"
+    action: ALLOW
+}
+
+ rule AdminUseTaskCardTitleRule {
+    description: "Admin can do everything for TaskCardTitle assets."
+    participant: "roll_royce.challenge.com.Admin"
+    operation: ALL
+    resource: "roll_royce.challenge.com.TaskCardTitle"
+    action: ALLOW
+}
+
+ rule AdminUseWorkRequestRule {
+    description: "Admin can read WorkRequest assets."
+    participant: "roll_royce.challenge.com.Admin"
+    operation: READ
+    resource: "roll_royce.challenge.com.WorkRequest"
+    action: ALLOW
+}
+
+/**
+ * Manager access control rule
+ */
+ rule ManagerUseProjectRule {
+    description: "Manager can update Project assets."
+    participant: "roll_royce.challenge.com.Manager"
+    operation: UPDATE
+    resource: "roll_royce.challenge.com.Project"
+    action: ALLOW
+}
+
+ rule ManagerUseDepartmentRule {
+    description: "Manager can update and read Department assets."
+    participant: "roll_royce.challenge.com.Manager"
+    operation: UPDATE, READ
+    resource: "roll_royce.challenge.com.Department"
+    action: ALLOW
+}
+
+ rule ManagerUseWorkRequestRule {
+    description: "Manager can update and read WorkRequest assets."
+    participant: "roll_royce.challenge.com.Manager"
+    operation: UPDATE, READ
+    resource: "roll_royce.challenge.com.WorkRequest"
+    action: ALLOW
+}
+
+ rule ManagerUseTaskCardRule {
+    description: "Manager can create, update and read TaskCard assets."
+    participant: "roll_royce.challenge.com.Manager"
+    operation: CREATE, UPDATE, READ
+    resource: "roll_royce.challenge.com.TaskCard"
+    action: ALLOW
+}
+
+ rule ManagerUseTaskCardTitleRule {
+    description: "Manager can do everything for TaskCardTitle assets."
+    participant: "roll_royce.challenge.com.Manager"
+    operation: ALL
+    resource: "roll_royce.challenge.com.TaskCardTitle"
+    action: ALLOW
+}
+
+/**
+ * Requester access control rule
+ */
+ rule RequesterUseWorkRequestRule {
+    description: "Requester can create, update and read WorkRequest assets."
+    participant: "roll_royce.challenge.com.Requester"
+    operation: CREATE, UPDATE, READ
+    resource: "roll_royce.challenge.com.WorkRequest"
+    action: ALLOW
+}
+
+ rule RequesterUseDepartmentRule {
+    description: "Requester can read Department assets."
+    participant: "roll_royce.challenge.com.Requester"
+    operation: READ
+    resource: "roll_royce.challenge.com.Department"
+    action: ALLOW
+}
+
+/**
+ * Worker access control rule
+ */
+ rule WorkerUseTaskCardRule {
+    description: "Worker can update and read TaskCard assets."
+    participant: "roll_royce.challenge.com.Worker"
+    operation: UPDATE, READ
+    resource: "roll_royce.challenge.com.TaskCard"
+    action: ALLOW
+}
+
+/**
+ * All access control rule
+ */
+ rule AllReadProjectRule {
+    description: "All can read Project assets."
+    participant: "roll_royce.challenge.com.*"
+    operation: READ
+    resource: "roll_royce.challenge.com.Project"
+    action: ALLOW
+}
+
+ rule AllReadDepartmentRule {
+    description: "All can read Department assets."
+    participant: "roll_royce.challenge.com.*"
+    operation: READ
+    resource: "roll_royce.challenge.com.Department"
+    action: ALLOW
+}
+
+ rule AllReadTaskCardTitleRule {
+   description: "All can read TaskCardTitle assets."
+   participant: "roll_royce.challenge.com.*"
+   operation: READ
+   resource: "roll_royce.challenge.com.TaskCardTitle"
+   action: ALLOW
+}
+
+/**
+ * System access control rule
+ */
+rule SystemACL {
+    description: "System ACL to permit all access"
+    participant: "org.hyperledger.composer.system.Participant"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}

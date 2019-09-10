@@ -1,0 +1,323 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+namespace roll_royce.challenge.com
+
+abstract participant baseParticipant identified by userID {
+  o String userID 
+  o String username
+  o String email
+  o DateTime created
+  o Boolean disabled
+  --> Department department
+  }
+ 
+participant Requester extends baseParticipant {}
+  
+participant Worker extends baseParticipant {}
+  
+participant Admin extends baseParticipant {}
+  
+participant Manager extends baseParticipant {}
+  
+asset WorkRequest identified by workRequestID {
+  o String workRequestID
+  o String taskName
+  o Integer taskPriority default=1 range=[1,5] // The work reqest priority for 1-5.
+  o String description
+  o DateTime deadline // The work request deadline.
+  o Integer completion // The 0-100 degree of completion.
+  o Boolean disable default = false // Whether the task needs to be done.
+  o DateTime created
+  --> Requester requester
+  --> Worker worker
+  --> Department department
+  --> Project project
+  --> Manager manager
+  }
+  
+asset Department identified by departmentID {
+  o String departmentID
+  o String departmentName
+  --> Manager manager
+  }
+
+asset Project identified by projectID {
+  o String projectID
+  o String projectName
+  --> Manager manager
+  }
+
+asset TaskCard identified by cardID {
+  o String cardID
+  o String details
+  o DateTime created
+  o DateTime updated
+  o Boolean completed
+  o Boolean cancelled
+  --> Worker worker
+  --> Manager manager
+  --> TaskCardTitle taskCardTitle
+  --> WorkRequest workRequest
+}
+
+asset TaskCardTitle identified by titleID {
+  o String titleID
+  o String title
+  o DateTime created
+  o DateTime updated
+  --> Manager manager
+  --> Admin admin
+}
+
+/**
+ * Create transaction.
+ */
+transaction AdminCreateDepartment {
+  --> Admin admin
+  o String departmentID
+  o String departmentName
+  --> Manager manager
+  }
+
+event AdminCreateDepartmentEvent {
+  --> Department department
+  }
+
+transaction AdminCreateProject {
+  --> Admin admin
+  o String projectID
+  o String projectName
+  --> Manager manager
+  }
+
+event AdminCreateProjectEvent {
+  --> Project project
+  }
+
+transaction RequesterCreateWorkRequest {
+  o String workRequestID
+  o String taskName
+  o Integer taskPriority default=1 range=[1,5]
+  o String description
+  o DateTime deadline
+  o Integer completion
+  o Boolean disable default = false
+  o DateTime created
+  --> Requester requester
+  --> Worker worker
+  --> Department department
+  --> Project project
+  --> Manager manager
+  }
+
+event RequesterCreateWorkRequestEvent {
+  --> WorkRequest workRequest
+  }
+
+transaction ManagerCreateTaskCard {
+  o String cardID
+  o String details
+  o DateTime created
+  o DateTime updated
+  o Boolean completed
+  o Boolean cancelled
+  --> Worker worker
+  --> Manager manager
+  --> TaskCardTitle taskCardTitle
+  --> WorkRequest workRequest
+}
+
+event ManagerCreateTaskCardEvent {
+  --> TaskCard taskCard
+  }
+
+transaction CreateTaskCardTitle {
+  o String titleID
+  o String title
+  o DateTime created
+  o DateTime updated
+  --> Manager manager
+  --> Admin admin
+}
+
+event CreateTaskCardTitleEvent {
+  --> TaskCardTitle taskCardTitle
+  }
+
+/**
+ * Update transaction.
+ */
+transaction UpdateDepartment {
+  --> Admin admin optional
+  --> Manager manager optional
+  o String departmentName
+  --> Department department
+}
+
+event UpdateDepartmentEvent {
+  --> Department department
+  }
+
+transaction UpdateProject {
+  --> Admin admin optional
+  --> Manager manager optional
+  o String projectName
+  --> Project project
+}
+
+event UpdateProjectEvent {
+  --> Project project
+  }
+
+transaction RequesterUpdateWorkRequest {
+  --> Requester requester
+  --> WorkRequest workRequest
+  o String taskName optional
+  o Integer taskPriority optional
+  o String description optional
+  o DateTime deadline optional
+}
+
+event RequesterUpdateWorkEvent {
+  --> WorkRequest workRequest
+  }
+
+transaction AdminUpdateWorkRequest {
+  --> Admin admin
+  --> WorkRequest workRequest
+  o Boolean disable
+}
+
+event AdminUpdateWorkEvent {
+  --> WorkRequest workRequest
+  }
+
+transaction ManagerUpdateWorkRequest {
+  --> Manager manager
+  --> WorkRequest workRequest
+  o Integer completion
+}
+
+event ManagerUpdateWorkEvent {
+  --> WorkRequest workRequest
+  }
+  
+transaction ManagerUpdateTaskCard {
+  --> Manager manager
+  --> TaskCard taskCard
+  o Boolean cancelled
+}
+
+event ManagerUpdateTaskCardEvent {
+  --> TaskCard taskCard
+  }
+
+transaction WorkerUpdateTaskCard {
+  --> Worker worker
+  --> TaskCard taskCard
+  o Boolean completed
+}
+
+event WorkerUpdateTaskCardEvent {
+  --> TaskCard taskCard
+  }
+
+transaction UpdateTaskCardTitle {
+  --> Admin admin optional
+  --> Manager manager optional
+  o String title
+  o DateTime created
+  o DateTime updated
+  --> TaskCardTitle taskCardTitle
+}
+
+event UpdateTaskCardTitleEvent {
+  --> TaskCardTitle taskCardTitle
+  }
+
+/**
+ * Query transaction.
+ */
+transaction ListDepartments {
+}
+
+event ListDepartmentsEvent {
+  o String listData
+  }
+
+transaction ListProjects {
+}
+
+event ListProjectsEvent {
+  o String listData
+  }
+
+transaction ListTaskCardTitle {
+}
+
+event ListTaskCardTitleEvent {
+  o String listData
+  }
+
+transaction AdminWorkRequestList {
+}
+
+event AdminWorkRequestListEvent {
+  o String listData
+  }
+
+transaction ManagerWorkRequestList {
+  o String userID
+}
+
+event ManagerWorkRequestListEvent {
+  o String listData
+  }
+
+transaction RequesterWorkRequestList {
+  o String userID
+}
+
+event RequesterWorkRequestListEvent {
+  o String listData
+  }
+
+transaction WorkerTaskCardList {
+  o String userID
+}
+
+event WorkerTaskCardListEvent {
+  o String listData
+  }
+
+transaction ManagerTaskCardList {
+  o String userID
+}
+
+event ManagerTaskCardListEvent {
+  o String listData
+  }
+/**
+ * Delete transaction.
+ */
+transaction DeleteTaskCardTitle {
+  --> Admin admin optional
+  --> Manager manager optional
+  o String titleID
+}
+
+event DeleteTaskCardTitleEvent {
+  o String message
+  }

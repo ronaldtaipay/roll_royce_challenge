@@ -1,0 +1,54 @@
+/**
+ * The queries.qry file for roll-royce challenge query functions.
+ */
+query TheDepartmentsList{
+  description: "Get the deparments list"
+  statement: 
+    SELECT roll_royce.challenge.com.Department
+}
+
+query TheProjectsList{
+  description: "Get the projects list"
+  statement: 
+    SELECT roll_royce.challenge.com.Project
+}
+
+query AdminWorkRequestList{
+  description: "Admin get the work requests list"
+  statement:
+    SELECT roll_royce.challenge.com.WorkRequest
+}
+
+query ManagerWorkRequestList{
+  description: "Manager get the work requests list"
+  statement:
+    SELECT roll_royce.challenge.com.WorkRequest
+      WHERE (manager == _$managerID)
+}
+
+query RequesterWorkRequestList{
+  description: "Requester get the work requests list"
+  statement:
+    SELECT roll_royce.challenge.com.WorkRequest
+      WHERE (requester == _$requestID)
+}
+
+query TheTaskCardTitleList{
+  description: "Get the task card title list"
+  statement: 
+    SELECT roll_royce.challenge.com.TaskCardTitle
+}
+
+query WorkerTaskCardList{
+  description: "Worker get the task card list"
+  statement:
+    SELECT roll_royce.challenge.com.TaskCard
+      WHERE (worker == _$workerID)
+}
+
+query ManagerTaskCardList{
+  description: "Manager get the task card list"
+  statement:
+    SELECT roll_royce.challenge.com.TaskCard
+      WHERE (manager == _$managerID)
+}
