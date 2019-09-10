@@ -1,0 +1,44 @@
+﻿@model WorkRequestInput.Models.WorkRequestInput.WRICard
+
+<h4>WRICard</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="testView">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="AssignedToID" class="control-label"></label>
+                <input asp-for="AssignedToID" class="form-control" />
+                <span asp-validation-for="AssignedToID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WRIID" class="control-label"></label>
+                <input asp-for="WRIID" class="form-control" />
+                <span asp-validation-for="WRIID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Detail" class="control-label"></label>
+                <input asp-for="Detail" class="form-control" />
+                <span asp-validation-for="Detail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreateTime" class="control-label"></label>
+                <input asp-for="CreateTime" class="form-control" />
+                <span asp-validation-for="CreateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Completed" /> @Html.DisplayNameFor(model => model.Completed)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

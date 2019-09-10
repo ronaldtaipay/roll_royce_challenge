@@ -1,0 +1,245 @@
+﻿@model WorkRequestInput.Models.DropdownEdit.ProjectsViewModel
+@{
+    ViewData["Title"] = "Projects List";
+}
+<style>
+    .avatar {
+        vertical-align: middle;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+
+    .modal-header .close {
+        margin: -1rem -1rem 0 0 !important;
+    }
+
+    .fa-pen, .fa-trash:hover {
+        cursor: pointer;
+    }
+
+    table a:hover {
+        text-decoration: none;
+    }
+
+    table thead a {
+        color: white !important;
+    }
+</style>
+<h1>Projects List</h1>
+<form method="get" asp-action="ProjectsEdit">
+    <div class="form-controls no-color row justify-content-end">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewBag.currentFilter" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="ProjectsEdit">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<div class="row">
+    <div class="col-12">
+        <table class="table table-responsive-md">
+            <thead class="thead-dark">
+                <tr>
+                    <th></th>
+                    <th>
+
+                        <a asp-action="ProjectsEdit" asp-route-sortOrder="@ViewBag.IdSortParm" asp-route-currentFilter="@ViewBag.CurrentFilter">@Html.DisplayNameFor(model => model.project.id)<i class="fa fa-sort ml-1"></i></a>
+                    </th>
+                    <th>
+                        <a asp-action="ProjectsEdit" asp-route-sortOrder="@ViewBag.NameSortParm" asp-route-currentFilter="@ViewBag.CurrentFilter">@Html.DisplayNameFor(model => model.project.name)<i class="fa fa-sort ml-1"></i></a>
+
+                    </th>
+                    @*<th data-field="id" data-sortable="true">Project ID<i class="fa fa-sort ml-1"></i></th>
+                        <th data-field="name" data-sortable="true">Project Name<i class="fa fa-sort ml-1"></i></th>*@
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @for (int i = 0; i < Model.projects.Count(); i++) {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@Model.projects.ElementAt(i).id</td>
+                        <td>@Model.projects.ElementAt(i).name</td>
+                        <td><i class="fa fa-pen"></i><i class="fa fa-trash ml-3"></i></td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+        @{
+            var prevDisabled = !Model.projects.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.projects.HasNextPage ? "disabled" : "";
+            
+        }
+
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-end">
+                <li class="page-item  @prevDisabled">
+
+                    <a asp-action="ProjectsEdit"
+                       asp-route-sortOrder="@ViewBag.CurrentSort"
+                       asp-route-pageNumber="@(Model.projects.PageIndex - 1)"
+                       asp-route-currentFilter="@ViewBag.CurrentFilter"
+                       class="page-link">
+                        Previous
+                    </a>
+                </li>
+                @if (Model.projects.PageIndex - 4 >1) {
+                    <li class="page-item">
+
+                        <a asp-action="ProjectsEdit"
+                           asp-route-sortOrder="@ViewBag.CurrentSort"
+                           asp-route-pageNumber="@(Model.projects.PageIndex-4 )"
+                           asp-route-currentFilter="@ViewBag.CurrentFilter"
+                           class="page-link">
+                            ...
+                        </a>
+                    </li>
+
+                }
+
+
+                @for (var i = (Model.projects.PageIndex - 4) < 0 ? 1 : Model.projects.PageIndex - 3; i < Model.projects.PageIndex + 4; i++) {
+                    if (i > Model.projects.TotalPages) {
+                        break;
+                    }
+
+
+                    <li class="page-item @((i==  Model.projects.PageIndex)?"disabled":"")">
+                        <a asp-action="ProjectsEdit"
+                           asp-route-sortOrder="@ViewBag.CurrentSort"
+                           asp-route-pageNumber="@(i )"
+                           asp-route-currentFilter="@ViewBag.CurrentFilter"
+                           class="page-link">
+                            @i
+                        </a>
+                    </li>
+
+
+                }
+
+                @if (Model.projects.PageIndex + 4 < Model.projects.TotalPages) {
+                    <li class="page-item">
+
+                        <a asp-action="ProjectsEdit"
+                           asp-route-sortOrder="@ViewBag.CurrentSort"
+                           asp-route-pageNumber="@(Model.projects.PageIndex+4 )"
+                           asp-route-currentFilter="@ViewBag.CurrentFilter"
+                           class="page-link">
+                            ...
+                        </a>
+                    </li>
+
+                }
+                <li class="page-item @nextDisabled">
+                    <a asp-action="ProjectsEdit"
+                       asp-route-sortOrder="@ViewBag.CurrentSort"
+                       asp-route-pageNumber="@(Model.projects.PageIndex + 1)"
+                       asp-route-currentFilter="@ViewBag.CurrentFilter"
+                       class="page-link ">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <button class="btn btn-primary" onclick="CreateProject()">Create Project</button>
+    </div>
+</div>
+
+
+<!-- The Create Modal -->
+<div class="modal fade" id="CreateProjectModal">
+    <div class="modal-dialog ">
+        <form method="post">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Create New Project</h4>
+                    <img src="~/res/avatar/avatar2.png" alt="Avatar" class="avatar ml-auto">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-12">
+
+
+                            <input id="idInput" asp-for="project.id" style="display:none" />
+
+                            <div class="form-group">
+                                <i class="fa fa-project-diagram"></i>
+                                <label asp-for="project.name" class="control-label"></label>
+                                <input id="nameInput" asp-for="project.name" class="form-control" autofocus />
+                                <span asp-validation-for="project.name" class="text-danger"></span>
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" onclick="toast()">Save</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+
+</div>
+
+<script>
+    $('document').ready(function () {
+
+        //清除錯誤訊息
+        if ($('span').text() != '') {
+            $('#CreateProjectModal').modal('show');
+        }
+    });
+
+    function CreateProject() {
+        $('#CreateProjectModal input').val("");
+        $('.modal-title').text("Create New Project");
+        $('#CreateProjectModal').modal('show');
+        //empty all input fields
+
+    }
+
+    $('.fa-pen').click(function () {
+        //清除錯誤訊息
+        $('span').text('');
+        $('.modal-title').text("Edit Project");
+        $('#CreateProjectModal').modal('show');
+        //alert($('#CreateProjectModal input:nth-child(2)').val());
+        $('#idInput').val($(this).closest('tr').children('td:nth-child(2)').text());
+        $('#nameInput').val($(this).closest('tr').children('td:nth-child(3)').text());
+
+    })
+
+    $('.fa-trash').click(function () {
+        //alert($(this).closest('tr').children('td:nth-child(2)').text());
+        var msg = $(this).closest('tr').children('td:nth-child(2)').text();
+        console.log(msg);
+
+        $.get("/DropdownEdit/DelProject", { id: msg }).done(function (data) {
+            alert(data[0]);
+
+        });
+
+    })
+
+
+</script>
