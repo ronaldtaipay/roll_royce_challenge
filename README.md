@@ -1,4 +1,4 @@
-# Roll-royce Challenge Business Network
+# Roll-royce Challenge Business Network Configuration
 
 > This is the "Roll-royce Challenge" of Hyperledger Composer samples, which demonstrates the core functionality of Hyperledger Composer by changing the value of an asset.
 
