@@ -17,30 +17,49 @@ namespace roll_royce.challenge.com
 abstract participant baseParticipant identified by userID {
   o String userID 
   o String username
-  o String email
+  o String name
+  o String contact
+  o String email optional
   o DateTime created
   o Boolean disabled
   --> Department department
   }
  
-participant Requester extends baseParticipant {}
-  
+participant Requestor extends baseParticipant {}
 participant Worker extends baseParticipant {}
-  
 participant Admin extends baseParticipant {}
-  
 participant Manager extends baseParticipant {}
-  
-asset WorkRequest identified by workRequestID {
-  o String workRequestID
-  o String taskName
-  o Integer taskPriority default=1 range=[1,5] // The work reqest priority for 1-5.
-  o String description
+participant Operator extends baseParticipant {}
+
+asset WorkRequest identified by entryID {
+  o String entryID
+  o String subjectRequest
+  o Integer urgentRequest default=1 range=[1,5] // The work reqest priority for 1-5.
+  o String summarizedTaskDescription
   o DateTime deadline // The work request deadline.
   o Integer completion // The 0-100 degree of completion.
   o Boolean disable default = false // Whether the task needs to be done.
   o DateTime created
-  --> Requester requester
+  o String location
+  o String referenceNumber
+  o String ACtailNumber
+  o String enginePositionNumber
+  o String ESN 
+  o String lineAdditions
+  o String actions
+  o String materialsNeeded
+  o String specialInstructions
+  o String hangarAdditions
+  o String aircraftCheckName
+  o String documentReference
+  o String E4NotificationNumber
+  o String componentChanges
+  o String EXEJE8Notification optional
+  o Boolean PNon optional
+  o Boolean PNoff optional
+  o String BFEShortages optional
+  o String equipmentNumber
+  --> Requestor requestor
   --> Worker worker
   --> Department department
   --> Project project
@@ -70,7 +89,7 @@ asset TaskCard identified by cardID {
   --> Manager manager
   --> TaskCardTitle taskCardTitle
   --> WorkRequest workRequest
-}
+  }
 
 asset TaskCardTitle identified by titleID {
   o String titleID
@@ -79,8 +98,43 @@ asset TaskCardTitle identified by titleID {
   o DateTime updated
   --> Manager manager
   --> Admin admin
-}
+  }
 
+asset WorkInstruction identified by instrctionID {
+  o String instrctionID
+  o String workscopeContactDetails
+  o String revision
+  o DateTime networkNumber
+  o DateTime activity
+  o DateTime originatorName
+  o DateTime date
+  --> CustomerInformation customerInformation
+  --> WorkscopeTask workscopeTask
+  }
+
+asset CustomerInformation identified by customerInformationID {
+  o String customerInformationID
+  o String aircraftRegistration 
+  o String engineType
+  o String OnOffWing
+  o String wingPosition
+  o String taskLocation
+  o DateTime taskStart 
+  o DateTime taskEnd  
+  --> Operator operator
+  }
+
+asset WorkscopeTask identified by workscopeTaskID {
+  o String workscopeTaskID
+  o String requestedTaskDescription 
+  o String technicalDataReference 
+  o String SIAtaskReference
+  o String additionalNotes
+  o Double costRateCharge
+  o String costType
+  o Boolean workInstructionAcceptance
+  o String invoicingInstructions
+}
 /**
  * Create transaction.
  */
@@ -106,23 +160,42 @@ event AdminCreateProjectEvent {
   --> Project project
   }
 
-transaction RequesterCreateWorkRequest {
-  o String workRequestID
-  o String taskName
-  o Integer taskPriority default=1 range=[1,5]
-  o String description
+transaction RequestorCreateWorkRequest {
+  o String entryID
+  o String subjectRequest
+  o Integer urgentRequest default=1 range=[1,5]
+  o String summarizedTaskDescription
   o DateTime deadline
   o Integer completion
   o Boolean disable default = false
   o DateTime created
-  --> Requester requester
+  o String location
+  o String referenceNumber
+  o String ACtailNumber
+  o String enginePositionNumber
+  o String ESN 
+  o String lineAdditions
+  o String actions
+  o String materialsNeeded
+  o String specialInstructions
+  o String hangarAdditions
+  o String aircraftCheckName
+  o String documentReference
+  o String E4NotificationNumber
+  o String componentChanges
+  o String EXEJE8Notification optional
+  o Boolean PNon optional
+  o Boolean PNoff optional
+  o String BFEShortages optional
+  o String equipmentNumber
+  --> Requestor requestorName
   --> Worker worker
   --> Department department
   --> Project project
   --> Manager manager
   }
 
-event RequesterCreateWorkRequestEvent {
+event RequestorCreateWorkRequestEvent {
   --> WorkRequest workRequest
   }
 
@@ -137,7 +210,7 @@ transaction ManagerCreateTaskCard {
   --> Manager manager
   --> TaskCardTitle taskCardTitle
   --> WorkRequest workRequest
-}
+  }
 
 event ManagerCreateTaskCardEvent {
   --> TaskCard taskCard
@@ -150,10 +223,58 @@ transaction CreateTaskCardTitle {
   o DateTime updated
   --> Manager manager
   --> Admin admin
-}
+  }
 
 event CreateTaskCardTitleEvent {
   --> TaskCardTitle taskCardTitle
+  }
+  
+transaction CreateWorkInstruction {
+  o String instrctionID
+  o String workscopeContactDetails
+  o String revision
+  o DateTime networkNumber
+  o DateTime activity
+  o DateTime originatorName
+  o DateTime date
+  --> CustomerInformation customerInformation
+  --> WorkscopeTask workscopeTask
+  }
+
+event CreateWorkInstructionEvent {
+  --> WorkInstruction workInstruction
+  }
+
+transaction CreateCustomerInformation {
+  o String customerInformationID
+  o String aircraftRegistration 
+  o String engineType
+  o String OnOffWing
+  o String wingPosition
+  o String taskLocation
+  o DateTime taskStart 
+  o DateTime taskEnd  
+  --> Operator operator
+  }
+
+event CreateCustomerInformationEvent {
+  --> CustomerInformation customerInformation
+  }
+
+transaction CreateWorkscopeTask {
+  o String workscopeTaskID
+  o String requestedTaskDescription 
+  o String technicalDataReference 
+  o String SIAtaskReference
+  o String additionalNotes
+  o Double costRateCharge
+  o String costType
+  o Boolean workInstructionAcceptance
+  o String invoicingInstructions
+  }
+
+event CreateWorkscopeTaskEvent {
+  --> WorkscopeTask workscopeTask
   }
 
 /**
@@ -164,7 +285,7 @@ transaction UpdateDepartment {
   --> Manager manager optional
   o String departmentName
   --> Department department
-}
+  }
 
 event UpdateDepartmentEvent {
   --> Department department
@@ -175,22 +296,41 @@ transaction UpdateProject {
   --> Manager manager optional
   o String projectName
   --> Project project
-}
+  }
 
 event UpdateProjectEvent {
   --> Project project
   }
 
-transaction RequesterUpdateWorkRequest {
-  --> Requester requester
+transaction RequestorUpdateWorkRequest {
+  --> Requestor requestor
   --> WorkRequest workRequest
-  o String taskName optional
-  o Integer taskPriority optional
-  o String description optional
+  o String subjectRequest optional
+  o Integer urgentRequest optional
+  o String summarizedTaskDescription optional
   o DateTime deadline optional
-}
+  o String location optional
+  o String referenceNumber optional
+  o String ACtailNumber optional
+  o String enginePositionNumber optional
+  o String ESN optional
+  o String lineAdditions optional
+  o String actions optional
+  o String materialsNeeded optional
+  o String specialInstructions optional
+  o String hangarAdditions optional
+  o String aircraftCheckName optional
+  o String documentReference optional
+  o String E4NotificationNumber optional
+  o String componentChanges optional
+  o String EXEJE8Notification optional
+  o Boolean PNon optional
+  o Boolean PNoff optional
+  o String BFEShortages optional
+  o String equipmentNumber optional
+  }
 
-event RequesterUpdateWorkEvent {
+event RequestorUpdateWorkEvent {
   --> WorkRequest workRequest
   }
 
@@ -198,7 +338,7 @@ transaction AdminUpdateWorkRequest {
   --> Admin admin
   --> WorkRequest workRequest
   o Boolean disable
-}
+  }
 
 event AdminUpdateWorkEvent {
   --> WorkRequest workRequest
@@ -208,7 +348,7 @@ transaction ManagerUpdateWorkRequest {
   --> Manager manager
   --> WorkRequest workRequest
   o Integer completion
-}
+  }
 
 event ManagerUpdateWorkEvent {
   --> WorkRequest workRequest
@@ -218,7 +358,7 @@ transaction ManagerUpdateTaskCard {
   --> Manager manager
   --> TaskCard taskCard
   o Boolean cancelled
-}
+  }
 
 event ManagerUpdateTaskCardEvent {
   --> TaskCard taskCard
@@ -228,7 +368,7 @@ transaction WorkerUpdateTaskCard {
   --> Worker worker
   --> TaskCard taskCard
   o Boolean completed
-}
+  }
 
 event WorkerUpdateTaskCardEvent {
   --> TaskCard taskCard
@@ -241,62 +381,108 @@ transaction UpdateTaskCardTitle {
   o DateTime created
   o DateTime updated
   --> TaskCardTitle taskCardTitle
-}
+  }
 
 event UpdateTaskCardTitleEvent {
   --> TaskCardTitle taskCardTitle
   }
 
+transaction UpdateWorkInstruction {
+  --> Operator operator optional
+  --> Manager manager optional
+  o String workscopeContactDetails
+  o String revision
+  o DateTime networkNumber
+  o DateTime activity
+  o DateTime originatorName
+  o DateTime date
+  --> WorkInstruction workInstruction
+  --> CustomerInformation customerInformation
+  --> WorkscopeTask workscopeTask
+  }
+
+event UpdateWorkInstructionEvent {
+  --> WorkInstruction workInstruction
+  }
+
+transaction UpdateCustomerInformation {
+  --> Operator operator optional
+  --> Manager manager optional
+  o String aircraftRegistration 
+  o String engineType
+  o String OnOffWing
+  o String wingPosition
+  o String taskLocation
+  o DateTime taskStart
+  o DateTime taskEnd
+  --> CustomerInformation customerInformation
+  }
+
+event UpdateCustomerInformationEvent {
+  --> CustomerInformation customerInformation
+  }
+
+transaction UpdateWorkscopeTask {
+  --> Operator operator optional
+  --> Manager manager optional
+  o String requestedTaskDescription
+  o String technicalDataReference
+  o String SIAtaskReference
+  o String additionalNotes
+  o Double costRateCharge
+  o String costType
+  o Boolean workInstructionAcceptance
+  o String invoicingInstructions
+  --> WorkscopeTask workscopeTask
+  }
+
+event UpdateWorkscopeTaskEvent {
+  --> WorkscopeTask workscopeTask
+  }
+
+
 /**
  * Query transaction.
  */
-transaction ListDepartments {
-}
-
+transaction ListDepartments {}
 event ListDepartmentsEvent {
   o String listData
   }
 
-transaction ListProjects {
-}
-
+transaction ListProjects {}
 event ListProjectsEvent {
   o String listData
   }
 
-transaction ListTaskCardTitle {
-}
-
+transaction ListTaskCardTitle {}
 event ListTaskCardTitleEvent {
   o String listData
   }
 
-transaction AdminWorkRequestList {
-}
-
+transaction AdminWorkRequestList {}
 event AdminWorkRequestListEvent {
   o String listData
   }
 
 transaction ManagerWorkRequestList {
   o String userID
-}
+  }
 
 event ManagerWorkRequestListEvent {
   o String listData
   }
 
-transaction RequesterWorkRequestList {
+transaction RequestorWorkRequestList {
   o String userID
-}
+  }
 
-event RequesterWorkRequestListEvent {
+event RequestorWorkRequestListEvent {
   o String listData
   }
 
 transaction WorkerTaskCardList {
   o String userID
-}
+  }
 
 event WorkerTaskCardListEvent {
   o String listData
@@ -304,7 +490,7 @@ event WorkerTaskCardListEvent {
 
 transaction ManagerTaskCardList {
   o String userID
-}
+  }
 
 event ManagerTaskCardListEvent {
   o String listData
@@ -316,7 +502,7 @@ transaction DeleteTaskCardTitle {
   --> Admin admin optional
   --> Manager manager optional
   o String titleID
-}
+  }
 
 event DeleteTaskCardTitleEvent {
   o String message

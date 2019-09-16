@@ -5,54 +5,53 @@
 This business network defines:
 
 **Participant**
-`Requester`, `Responder`, `Admin`, `Manager`
+`Requestor`, `Worker`, `Admin`, `Manager`, `Operator`
 
 **Asset**
-`WorkRequest`, `Department`, `Project`
+`WorkRequest`, `Department`, `Project`, `TaskCard`, `TaskCardTitle`, `WorkInstruction`, `CustomerInformation`, `WorkscopeTask`
 
 **Transaction**
-``
+`AdminCreateDepartment`, `AdminCreateProject`, `RequesterCreateWorkRequest`, `ManagerCreateTaskCard`, `CreateTaskCardTitle`, `CreateWorkInstruction`, `CreateCustomerInformation`, `CreateWorkscopeTask`, `UpdateDepartment`, `UpdateProject`, `RequesterUpdateWorkRequest`, `AdminUpdateWorkRequest`, `ManagerUpdateWorkRequest`, `ManagerUpdateTaskCard`, `WorkerUpdateTaskCard`, `UpdateTaskCardTitle`, `UpdateWorkInstruction`,`UpdateCustomerInformation`, `UpdateWorkscopeTask`, `ListDepartments`, `ListProjects`, `ListTaskCardTitle`, `AdminWorkRequestList`, `ManagerWorkRequestList`, `RequesterWorkRequestList`, `WorkerTaskCardList`, `ManagerTaskCardList`, `DeleteTaskCardTitle`
 
 **Event**
-``
+`AdminCreateDepartmentEvent`, `AdminCreateProjectEvent`, `RequesterCreateWorkRequestEvent`, `ManagerCreateTaskCardEvent`, `CreateTaskCardTitleEvent`, `CreateWorkInstructionEvent`, `CreateCustomerInformationEvent`, `CreateWorkscopeTaskEvent`, `UpdateDepartmentEvent`, `UpdateProjectEvent`, `RequesterUpdateWorkEvent`, `AdminUpdateWorkEvent`, `ManagerUpdateWorkEvent`, `ManagerUpdateTaskCardEvent`, `WorkerUpdateTaskCardEvent`, `UpdateTaskCardTitleEvent`, `UpdateWorkInstructionEvent`, `UpdateCustomerInformationEvent`, `UpdateWorkscopeTaskEvent`, `ListDepartmentsEvent`, `ListProjectsEvent`, `ListTaskCardTitleEvent`, `AdminWorkRequestListEvent`, `ManagerWorkRequestListEvent`, `RequesterWorkRequestListEvent`, `WorkerTaskCardListEvent`, `ManagerTaskCardListEvent`, `DeleteTaskCardTitleEvent`
 
-SampleAssets are owned by a SampleParticipant, and the value property on a SampleAsset can be modified by submitting a SampleTransaction. The SampleTransaction emits a SampleEvent that notifies applications of the old and new values for each modified SampleAsset.
+Admin can create the departmet and project assets with `AdminCreateDepartment` and `AdminCreateProject` transactions,these assets can be edited with `UpdateDepartment` and  `UpdateProject` transactions.
+Requester can create the `WorkRequest` asset with `RequesterCreateWorkRequest` transaction and then Admin can disable work request with `AdminUpdateWorkRequest` transaction, the Manager can update work request completion with `ManagerUpdateWorkRequest` transaction.
+Manager can create the task card with `ManagerCreateTaskCard` transaction and cancel that with `ManagerUpdateTaskCard` transaction.
+Manager and Admin can create the task card title with `CreateTaskCardTitle` transaction and update that with `UpdateTaskCardTitle` transaction, also using the `DeleteTaskCardTitle` transaction to delete the task card title.
+We can use these transactions `ListDepartments`, `ListProjects`and `ListTaskCardTitle` to get all the department, project and task card title assets. Admin can get the work request assets with `AdminWorkRequestList` transaction. Manager and Requester can get his own work request assets with `ManagerWorkRequestList` and `RequesterWorkRequestList` transactions. Worker and Manager can get his own task card assets with `WorkerTaskCardList` and `ManagerTaskCardList` transactions.
+Manager and Operator can create the work instruction, customer information and workscope task assets with `CreateWorkInstruction`, `CreateCustomerInformation` and `CreateWorkscopeTask` transactions, aslo using the `UpdateWorkInstruction`, `UpdateCustomerInformation` and `UpdateWorkscopeTask` transactions to update these assets.
 
 To test this Business Network Definition in the **Test** tab:
 
-Create a `SampleParticipant` participant:
+Create a `Admin` participant:
 
 ```
 {
-  "$class": "org.example.basic.SampleParticipant",
-  "participantId": "Toby",
-  "firstName": "Tobias",
-  "lastName": "Hunter"
+  "$class": "roll_royce.challenge.com.Admin",
+  "userID": "a01",
+  "username": "admin01",
+  "email": "admin01@test",
+  "created": "2019-09-11T02:18:07.572Z",
+  "disabled": false,
+  "department": "resource:roll_royce.challenge.com.Department#d01"
 }
 ```
 
-Create a `SampleAsset` asset:
+Submit a `AdminCreateDepartment` transaction:
 
 ```
 {
-  "$class": "org.example.basic.SampleAsset",
-  "assetId": "assetId:1",
-  "owner": "resource:org.example.basic.SampleParticipant#Toby",
-  "value": "original value"
+  "$class": "roll_royce.challenge.com.AdminCreateDepartment",
+  "admin": "resource:roll_royce.challenge.com.Admin#a01",
+  "departmentID": "d02",
+  "departmentName": "department02",
+  "manager": "resource:roll_royce.challenge.com.Manager#m01"
 }
 ```
 
-Submit a `SampleTransaction` transaction:
-
-```
-{
-  "$class": "org.example.basic.SampleTransaction",
-  "asset": "resource:org.example.basic.SampleAsset#assetId:1",
-  "newValue": "new value"
-}
-```
-
-After submitting this transaction, you should now see the transaction in the Transaction Registry and that a `SampleEvent` has been emitted. As a result, the value of the `assetId:1` should now be `new value` in the Asset Registry.
+After submitting this transaction, you should now see the transaction in the Transaction Registry and that a `AdminCreateDepartmentEvent` has been emitted. We can see the `Department` asset which includes an assets that "departmentID" is "d02".
 
 Congratulations!
 

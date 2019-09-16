@@ -30,7 +30,7 @@ query RequesterWorkRequestList{
   description: "Requester get the work requests list"
   statement:
     SELECT roll_royce.challenge.com.WorkRequest
-      WHERE (requester == _$requestID)
+      WHERE (requestor == _$entryID)
 }
 
 query TheTaskCardTitleList{

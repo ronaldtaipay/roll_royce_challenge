@@ -90,20 +90,44 @@
     action: ALLOW
 }
 
+ rule ManagerUseWorkInstructionRule {
+    description: "Manager can create and update for WorkInstruction assets."
+    participant: "roll_royce.challenge.com.Manager"
+    operation: CREATE, UPDATE
+    resource: "roll_royce.challenge.com.WorkInstruction"
+    action: ALLOW
+}
+
+ rule ManagerUseCustomerInformationRule {
+    description: "Manager can create and update CustomerInformation assets."
+    participant: "roll_royce.challenge.com.Manager"
+    operation: CREATE, UPDATE
+    resource: "roll_royce.challenge.com.CustomerInformation"
+    action: ALLOW
+}
+
+ rule ManagerUseWorkscopeTaskRule {
+    description: "Manager  can create and update WorkscopeTask assets."
+    participant: "roll_royce.challenge.com.Manager"
+    operation: CREATE, UPDATE
+    resource: "roll_royce.challenge.com.WorkscopeTask"
+    action: ALLOW
+}
+
 /**
- * Requester access control rule
+ * Requestor access control rule
  */
- rule RequesterUseWorkRequestRule {
-    description: "Requester can create, update and read WorkRequest assets."
-    participant: "roll_royce.challenge.com.Requester"
+ rule RequestorUseWorkRequestRule {
+    description: "Requestor can create, update and read WorkRequest assets."
+    participant: "roll_royce.challenge.com.Requestor"
     operation: CREATE, UPDATE, READ
     resource: "roll_royce.challenge.com.WorkRequest"
     action: ALLOW
 }
 
- rule RequesterUseDepartmentRule {
-    description: "Requester can read Department assets."
-    participant: "roll_royce.challenge.com.Requester"
+ rule RequestorUseDepartmentRule {
+    description: "Requestor can read Department assets."
+    participant: "roll_royce.challenge.com.Requestor"
     operation: READ
     resource: "roll_royce.challenge.com.Department"
     action: ALLOW
@@ -117,6 +141,33 @@
     participant: "roll_royce.challenge.com.Worker"
     operation: UPDATE, READ
     resource: "roll_royce.challenge.com.TaskCard"
+    action: ALLOW
+}
+
+/**
+ * Operator access control rule
+ */
+ rule OperatorUseWorkInstructionRule {
+    description: "Operator can create and update for WorkInstruction assets."
+    participant: "roll_royce.challenge.com.Operator"
+    operation: CREATE, UPDATE
+    resource: "roll_royce.challenge.com.WorkInstruction"
+    action: ALLOW
+}
+
+ rule OperatorUseCustomerInformationRule {
+    description: "Operator can create and update CustomerInformation assets."
+    participant: "roll_royce.challenge.com.Operator"
+    operation: CREATE, UPDATE
+    resource: "roll_royce.challenge.com.CustomerInformation"
+    action: ALLOW
+}
+
+ rule OperatorUseWorkscopeTaskRule {
+    description: "Operator can create and update WorkscopeTask assets."
+    participant: "roll_royce.challenge.com.Operator"
+    operation: CREATE, UPDATE
+    resource: "roll_royce.challenge.com.WorkscopeTask"
     action: ALLOW
 }
 
