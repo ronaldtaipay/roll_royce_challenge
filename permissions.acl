@@ -172,6 +172,17 @@
 }
 
 /**
+ * IoTserver access control rule
+ */
+  rule IoTserverUseDeviceReadingRule {
+    description: "IoTserver can create DeviceReading assets."
+    participant: "roll_royce.challenge.com.IoTserver"
+    operation: CREATE
+    resource: "roll_royce.challenge.com.DeviceReading"
+    action: ALLOW
+}
+
+/**
  * All access control rule
  */
  rule AllReadProjectRule {
@@ -198,6 +209,13 @@
    action: ALLOW
 }
 
+ rule AllReadDeviceReadingRule {
+    description: "All can read DeviceReading assets."
+    participant: "roll_royce.challenge.com.*"
+    operation: READ
+    resource: "roll_royce.challenge.com.DeviceReading"
+    action: ALLOW
+}
 /**
  * System access control rule
  */

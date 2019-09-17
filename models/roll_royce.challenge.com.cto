@@ -30,6 +30,7 @@ participant Worker extends baseParticipant {}
 participant Admin extends baseParticipant {}
 participant Manager extends baseParticipant {}
 participant Operator extends baseParticipant {}
+participant IoTserver extends baseParticipant {}
 
 asset WorkRequest identified by entryID {
   o String entryID
@@ -134,7 +135,13 @@ asset WorkscopeTask identified by workscopeTaskID {
   o String costType
   o Boolean workInstructionAcceptance
   o String invoicingInstructions
-}
+  }
+asset DeviceReading identified by deviceID {
+  o String deviceID
+  o String hash 
+  o DateTime initialDate
+  o DateTime endDate
+  }
 /**
  * Create transaction.
  */
@@ -275,6 +282,16 @@ transaction CreateWorkscopeTask {
 
 event CreateWorkscopeTaskEvent {
   --> WorkscopeTask workscopeTask
+  }
+transaction CreateDeviceReading {
+  o String deviceID
+  o String hash 
+  o DateTime initialDate
+  o DateTime endDate
+  }
+
+event CreateDeviceReadingEvent {
+  --> DeviceReading deviceReading
   }
 
 /**
